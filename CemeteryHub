@@ -1,0 +1,144 @@
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CemeteryRemote = ReplicatedStorage:WaitForChild("RE"):WaitForChild("1Cemeter1y")
+
+--// Variables
+local TargetName = "Hater"
+local AutoWriteEnabled = false
+local WriteDelay = 4 
+
+local Messages = {
+    "Pgl🤢", "Tmkx😝", "Tmr🤡", "CUD()", "CXUD👍", "6kka😂", "Marja☠️", "Bkl🤡", 
+    "Lole🥴", "Tmkb🤮", "Lwle😎", "N@lle🤡", "Rand1e💃", "L@ntu🥴", "Gnd😮", 
+    "L@wndu🤏", "TMKC 7 Baar🗿", "Ke kitne baap?", "Lalla Lalla Lori", "Bowhra tmk🤡", 
+    "Dallaaa👽", "Jatu ki Baal", "Ki mkc mein gu", "Rawndva👽", "GB road ki dawlli", 
+    "Faaahhhhh", "AJ Music Hub Bolti Public", "Jaawnth"
+}
+
+--// GUI Creation
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local UIStroke = Instance.new("UIStroke")
+local Title = Instance.new("TextLabel")
+local NameBox = Instance.new("TextBox")
+local StartToggle = Instance.new("TextButton")
+local DestroyBtn = Instance.new("TextButton")
+
+ScreenGui.Name = "4Jayyz_Cemetery_Hub"
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.ResetOnSpawn = false
+
+-- Main Frame
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Position = UDim2.new(0.5, -80, 0.5, -85)
+MainFrame.Size = UDim2.new(0, 165, 0, 165)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
+
+UIStroke.Thickness = 2
+UIStroke.Parent = MainFrame
+
+-- Rainbow Animation
+task.spawn(function()
+    while RunService.RenderStepped:Wait() do
+        local hue = tick() % 5 / 5
+        UIStroke.Color = Color3.fromHSV(hue, 1, 1)
+    end
+end)
+
+-- Title
+Title.Parent = MainFrame
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Text = "Instagra: 4jayyz"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 13
+
+-- (1) Target Name Textbox
+NameBox.Parent = MainFrame
+NameBox.PlaceholderText = "Enter Target Name..."
+NameBox.Text = TargetName
+NameBox.Size = UDim2.new(0.9, 0, 0, 30)
+NameBox.Position = UDim2.new(0.05, 0, 0.22, 0)
+NameBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+NameBox.TextColor3 = Color3.new(1, 1, 1)
+NameBox.Font = Enum.Font.Gotham
+NameBox.TextSize = 11
+Instance.new("UICorner", NameBox)
+
+NameBox:GetPropertyChangedSignal("Text"):Connect(function()
+    TargetName = NameBox.Text
+end)
+
+-- (2) Start Writing Toggle
+StartToggle.Parent = MainFrame
+StartToggle.Text = "Start Writing: OFF"
+StartToggle.Size = UDim2.new(0.9, 0, 0, 35)
+StartToggle.Position = UDim2.new(0.05, 0, 0.48, 0)
+StartToggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+StartToggle.TextColor3 = Color3.new(1, 1, 1)
+StartToggle.Font = Enum.Font.GothamBold
+StartToggle.TextSize = 12
+Instance.new("UICorner", StartToggle)
+
+-- (3) Destroy UI Button
+DestroyBtn.Parent = MainFrame
+DestroyBtn.Text = "Destroy UI"
+DestroyBtn.Size = UDim2.new(0.9, 0, 0, 25)
+DestroyBtn.Position = UDim2.new(0.05, 0, 0.78, 0)
+DestroyBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+DestroyBtn.TextColor3 = Color3.new(1, 1, 1)
+DestroyBtn.Font = Enum.Font.GothamBold
+DestroyBtn.TextSize = 11
+Instance.new("UICorner", DestroyBtn)
+
+--// Execution Logic
+local function WriteOnAllSigns()
+    pcall(function()
+        local commonIDs = {"211", "100", "279", "13", "126", "121", "110"}
+        for _, id in pairs(commonIDs) do
+            local randomMsg = Messages[math.random(1, #Messages)]
+            CemeteryRemote:FireServer("ReturningBigSign3Name", tostring(id), TargetName .. " " .. randomMsg)
+        end
+        
+        for i = 1, 300, 10 do 
+            if not AutoWriteEnabled then break end
+            task.spawn(function()
+                for j = i, i+9 do
+                    local loopMsg = Messages[math.random(1, #Messages)]
+                    CemeteryRemote:FireServer("ReturningBigSign3Name", tostring(j), TargetName .. " " .. loopMsg)
+                end
+            end)
+            task.wait(0.1) 
+        end
+    end)
+end
+
+-- Toggle Logic
+StartToggle.MouseButton1Click:Connect(function()
+    AutoWriteEnabled = not AutoWriteEnabled
+    StartToggle.Text = "Start Writing: " .. (AutoWriteEnabled and "ON" or "OFF")
+    StartToggle.BackgroundColor3 = AutoWriteEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(40, 40, 40)
+    
+    if AutoWriteEnabled then
+        task.spawn(function()
+            while AutoWriteEnabled do
+                WriteOnAllSigns()
+                task.wait(WriteDelay)
+            end
+        end)
+    end
+end)
+
+-- Destroy Logic
+DestroyBtn.MouseButton1Click:Connect(function()
+    AutoWriteEnabled = false
+    ScreenGui:Destroy()
+end)
